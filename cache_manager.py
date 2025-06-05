@@ -1,4 +1,4 @@
-from typing import Any, Optional, Dict, Callable
+from typing import Any, Optional, Dict, Callable, List
 from functools import wraps
 from flask_caching import Cache
 import logging
@@ -103,13 +103,35 @@ def invalidate_cache(prefix: str, *args, **kwargs):
     except Exception as e:
         logger.error(f"Error invalidating cache: {str(e)}")
 
-def invalidate_pattern_cache(pattern: str):
-    """Invalidate all cached pattern analysis for a specific pattern"""
+def invalidate_pattern_cache(pattern: str, symbols: List[str] = None):
+    """Invalidate cached pattern analysis for a specific pattern"""
     try:
-        # This is a simplified approach - in production you might want
-        # to use Redis SCAN to find and delete matching keys
-        cache.clear()
-        logger.info(f"Cleared all cache due to pattern invalidation: {pattern}")
+        if symbols:
+            # Selective invalidation for specific symbols
+            for symbol in symbols:
+                cache_key = get_cache_key('pattern_analysis', symbol, pattern)
+                cache.delete(cache_key)
+                logger.debug(f"Invalidated cache for pattern {pattern}, symbol {symbol}")
+        else:
+            # Invalidate all pattern cache keys (more targeted than cache.clear())
+            try:
+                # Try to use Redis SCAN for pattern-based deletion
+                if hasattr(cache.cache, '_write_client'):
+                    redis_client = cache.cache._write_client
+                    pattern_key = get_cache_key('pattern_analysis', '*')
+                    keys = redis_client.keys(pattern_key)
+                    if keys:
+                        redis_client.delete(*keys)
+                        logger.info(f"Invalidated {len(keys)} pattern cache keys")
+                else:
+                    # Fallback: clear all cache (less efficient but safer)
+                    cache.clear()
+                    logger.warning(f"Used cache.clear() fallback for pattern invalidation: {pattern}")
+            except Exception as redis_error:
+                logger.warning(f"Redis-specific invalidation failed: {redis_error}, using cache.clear()")
+                cache.clear()
+                logger.info(f"Cleared all cache due to pattern invalidation: {pattern}")
+                
     except Exception as e:
         logger.error(f"Error invalidating pattern cache: {str(e)}")
 

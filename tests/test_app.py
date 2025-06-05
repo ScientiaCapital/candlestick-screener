@@ -66,12 +66,13 @@ def test_pattern_analyzer():
         'Close': [1.5, 2.5, 3.5]
     })
     
-    # Mock pandas-ta's cdl_pattern method
-    with patch('pandas.DataFrame.ta.cdl_pattern') as mock_pattern:
-        mock_pattern.return_value = pd.Series([1, -1, 0])
+    # Mock pandas-ta import and pattern function
+    with patch('app.PatternAnalyzer.process_pattern') as mock_process:
+        mock_process.return_value = pd.Series([1, -1, 0])
         results = analyzer.batch_process_patterns(df, ['CDLDOJI'])
         assert 'CDLDOJI' in results
         assert isinstance(results['CDLDOJI'], pd.Series)
+        mock_process.assert_called_once_with(df, 'CDLDOJI')
 
 def test_invalid_pattern(client):
     """Test invalid pattern handling"""
@@ -89,11 +90,13 @@ def test_caching_decorators():
     })
 
     with patch.object(cache, 'get', return_value=None) as mock_get, \
-         patch.object(cache, 'set') as mock_set:
+         patch.object(cache, 'set') as mock_set, \
+         patch('yfinance.download', return_value=df) as mock_download:
         # Test stock data caching
-        manager.get_stock_data('AAPL')
+        result = manager.get_stock_data('AAPL')
         assert mock_get.called
         assert mock_set.called
+        assert result is not None
 
         # Test pattern analysis caching
         analyzer.batch_process_patterns(df, ['CDLDOJI'])

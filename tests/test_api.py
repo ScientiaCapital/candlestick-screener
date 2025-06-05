@@ -56,8 +56,11 @@ def test_snapshot_endpoint_error(client, mock_symbols_file):
     with patch('app.open', mock_open(read_data='AAPL,Apple Inc.\nMSFT,Microsoft Corporation\n')):
         with patch('app.stock_manager.get_stock_data', side_effect=Exception('Test error')):
             response = client.get('/snapshot')
-            assert response.status_code == 500
-            assert b'error' in response.data.lower()
+            assert response.status_code == 200  # Graceful error handling
+            data = response.get_json()
+            assert data['status'] == 'success'
+            assert data['failed'] == 2  # Both symbols should fail
+            assert data['updated'] == 0  # No successful updates
 
 def test_invalid_pattern(client):
     """Test the index page with an invalid pattern."""

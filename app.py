@@ -20,6 +20,10 @@ from rate_limiter import (
     limit_snapshot, limit_pattern_analysis, limit_index,
     limit_burst, get_rate_limit_stats, init_app as init_rate_limiter
 )
+from security import (
+    init_security, InputValidator, SecurityMiddleware, 
+    CSRFProtection, validate_request_data
+)
 
 # Configure logging
 logging.basicConfig(
@@ -50,12 +54,8 @@ class StockDataManager:
         self._cache = {}
 
     def validate_symbol(self, symbol: str) -> bool:
-        """Validate stock symbol format"""
-        if not symbol or not isinstance(symbol, str):
-            return False
-        # Check for valid symbol format (alphanumeric, max 5 chars)
-        symbol = symbol.strip().upper()
-        return bool(symbol.isalnum() and 1 <= len(symbol) <= 5)
+        """Validate stock symbol format using security validator"""
+        return InputValidator.validate_symbol(symbol)
 
     @cache_stock_data()
     def get_stock_data(self, symbol: str, start_date: Optional[str] = None, 
@@ -151,6 +151,9 @@ cache.init_app(app, config=Config.get_cache_config())
 # Initialize rate limiter
 init_rate_limiter(app)
 
+# Initialize security
+init_security(app)
+
 # Initialize managers
 stock_manager = StockDataManager()
 pattern_analyzer = PatternAnalyzer()
@@ -184,6 +187,8 @@ def load_symbols() -> Dict[str, Dict[str, str]]:
 
 @app.route('/snapshot')
 @limit_snapshot()
+@CSRFProtection.require_csrf_token
+@SecurityMiddleware.validate_request_size()
 def snapshot():
     """Update stock data for all symbols"""
     try:
@@ -238,6 +243,7 @@ def snapshot():
 
 @app.route('/')
 @limit_index()
+@SecurityMiddleware.validate_pattern_input
 def index():
     """Main page with pattern scanning functionality"""
     pattern = request.args.get('pattern', '').strip()
