@@ -2983,3 +2983,119 @@
 1 Failed download:
 2025-06-05 11:48:06,460 - yfinance - ERROR - ['AIZ']: Exception('%ticker%: No timezone found, symbol may be delisted')
 2025-06-05 11:48:06,460 - app - WARNING - No data returned for symbol: AIZ
+2025-06-05 11:48:07,890 - yfinance - ERROR - Failed to get ticker 'ATO' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:07,914 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:07,915 - yfinance - ERROR - ['ATO']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:07,915 - app - WARNING - No data returned for symbol: ATO
+2025-06-05 11:48:09,464 - yfinance - ERROR - Failed to get ticker 'T' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:09,466 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:09,466 - yfinance - ERROR - ['T']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:09,467 - app - WARNING - No data returned for symbol: T
+2025-06-05 11:48:10,772 - yfinance - ERROR - Failed to get ticker 'ADSK' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:10,779 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:10,779 - yfinance - ERROR - ['ADSK']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:10,781 - app - WARNING - No data returned for symbol: ADSK
+2025-06-05 11:48:12,213 - yfinance - ERROR - Failed to get ticker 'ADP' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:12,223 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:12,223 - yfinance - ERROR - ['ADP']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:12,224 - app - WARNING - No data returned for symbol: ADP
+2025-06-05 11:48:13,935 - yfinance - ERROR - Failed to get ticker 'AZO' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:13,940 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:13,940 - yfinance - ERROR - ['AZO']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:13,940 - app - WARNING - No data returned for symbol: AZO
+2025-06-05 11:48:16,529 - yfinance - ERROR - Failed to get ticker 'AVB' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:16,533 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:16,534 - yfinance - ERROR - ['AVB']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:16,534 - app - WARNING - No data returned for symbol: AVB
+2025-06-05 11:48:17,854 - yfinance - ERROR - Failed to get ticker 'AVY' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:17,856 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:17,856 - yfinance - ERROR - ['AVY']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:17,857 - app - WARNING - No data returned for symbol: AVY
+2025-06-05 11:48:19,163 - yfinance - ERROR - Failed to get ticker 'BKR' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:19,171 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:19,172 - yfinance - ERROR - ['BKR']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:19,172 - app - WARNING - No data returned for symbol: BKR
+2025-06-05 11:48:20,545 - yfinance - ERROR - Failed to get ticker 'BLL' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:20,550 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:20,550 - yfinance - ERROR - ['BLL']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:20,550 - app - WARNING - No data returned for symbol: BLL
+2025-06-05 11:48:21,859 - yfinance - ERROR - Failed to get ticker 'BAC' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:21,864 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:21,864 - yfinance - ERROR - ['BAC']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:21,864 - app - WARNING - No data returned for symbol: BAC
+2025-06-05 11:48:23,272 - yfinance - ERROR - Failed to get ticker 'BK' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:23,279 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:23,280 - yfinance - ERROR - ['BK']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:23,280 - app - WARNING - No data returned for symbol: BK
+2025-06-05 11:48:24,932 - yfinance - ERROR - Failed to get ticker 'BAX' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:24,936 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:24,937 - yfinance - ERROR - ['BAX']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:24,937 - app - WARNING - No data returned for symbol: BAX
+2025-06-05 11:48:26,236 - yfinance - ERROR - Failed to get ticker 'BDX' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:26,246 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:26,246 - yfinance - ERROR - ['BDX']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:26,247 - app - WARNING - No data returned for symbol: BDX
+2025-06-05 11:48:26,247 - app - WARNING - Invalid symbol format: BRK.B
+2025-06-05 11:48:27,558 - yfinance - ERROR - Failed to get ticker 'BBY' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:27,563 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:27,563 - yfinance - ERROR - ['BBY']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:27,563 - app - WARNING - No data returned for symbol: BBY
+2025-06-05 11:48:28,883 - yfinance - ERROR - Failed to get ticker 'BIIB' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:28,890 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:28,891 - yfinance - ERROR - ['BIIB']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:28,891 - app - WARNING - No data returned for symbol: BIIB
+2025-06-05 11:48:30,244 - yfinance - ERROR - Failed to get ticker 'BLK' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:30,249 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:30,249 - yfinance - ERROR - ['BLK']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:30,249 - app - WARNING - No data returned for symbol: BLK
+2025-06-05 11:48:31,611 - yfinance - ERROR - Failed to get ticker 'BA' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:31,614 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:31,614 - yfinance - ERROR - ['BA']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:31,614 - app - WARNING - No data returned for symbol: BA
+2025-06-05 11:48:32,969 - yfinance - ERROR - Failed to get ticker 'BKNG' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:32,973 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:32,973 - yfinance - ERROR - ['BKNG']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:32,973 - app - WARNING - No data returned for symbol: BKNG
+2025-06-05 11:48:34,273 - yfinance - ERROR - Failed to get ticker 'BWA' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:34,284 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:34,284 - yfinance - ERROR - ['BWA']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:34,285 - app - WARNING - No data returned for symbol: BWA
+2025-06-05 11:48:35,896 - yfinance - ERROR - Failed to get ticker 'BXP' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:35,902 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:35,902 - yfinance - ERROR - ['BXP']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:35,902 - app - WARNING - No data returned for symbol: BXP
+2025-06-05 11:48:37,267 - yfinance - ERROR - Failed to get ticker 'BSX' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:37,271 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:37,271 - yfinance - ERROR - ['BSX']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:37,272 - app - WARNING - No data returned for symbol: BSX
+2025-06-05 11:48:39,474 - yfinance - ERROR - Failed to get ticker 'BMY' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:39,481 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:39,481 - yfinance - ERROR - ['BMY']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:39,481 - app - WARNING - No data returned for symbol: BMY
+2025-06-05 11:48:40,840 - yfinance - ERROR - Failed to get ticker 'AVGO' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-05 11:48:40,842 - yfinance - ERROR - 
+1 Failed download:
+2025-06-05 11:48:40,843 - yfinance - ERROR - ['AVGO']: Exception('%ticker%: No timezone found, symbol may be delisted')
+2025-06-05 11:48:40,843 - app - WARNING - No data returned for symbol: AVGO
