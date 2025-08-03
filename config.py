@@ -29,7 +29,7 @@ class Config:
     MAX_SYMBOLS = int(os.getenv('MAX_SYMBOLS', '1000'))  # Limit number of symbols
     
     # Cache settings
-    CACHE_TYPE = os.getenv('CACHE_TYPE', 'redis')
+    CACHE_TYPE = os.getenv('CACHE_TYPE', 'simple')  # Use simple cache as fallback
     CACHE_REDIS_URL = os.getenv('CACHE_REDIS_URL', 'redis://localhost:6379/0')
     CACHE_TIMEOUT = max(60, int(os.getenv('CACHE_TIMEOUT', '300')))  # Minimum 1 minute
     
@@ -41,11 +41,26 @@ class Config:
         'socket_timeout': 30
     }
     
-    # API Keys
+    # Alpaca API Configuration (Required for MVP)
+    ALPACA_API_KEY = os.getenv('ALPACA_API_KEY')
+    ALPACA_SECRET_KEY = os.getenv('ALPACA_SECRET_KEY')
+    ALPACA_BASE_URL = os.getenv('ALPACA_BASE_URL', 'https://paper-api.alpaca.markets')
+    
+    # External API Keys
     ALPHA_VANTAGE_API_KEY = os.getenv('ALPHA_VANTAGE_API_KEY')
+    
+    # Database Configuration
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    DEV_DATABASE_URL = os.getenv('DEV_DATABASE_URL')
+    PROD_DATABASE_URL = os.getenv('PROD_DATABASE_URL')
     
     # Security settings
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max upload
+    CSRF_SECRET_KEY = os.getenv('CSRF_SECRET_KEY')
+    API_RATE_LIMIT = os.getenv('API_RATE_LIMIT', '100/hour')
+    REQUEST_TIMEOUT = int(os.getenv('REQUEST_TIMEOUT', '30'))
+    CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:3000').split(',')
+    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
     
     # Logging
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
@@ -65,9 +80,30 @@ class Config:
             if cls.FLASK_DEBUG:
                 issues['FLASK_DEBUG'] = 'Debug mode should be disabled in production'
                 
+            if not cls.ALPACA_API_KEY:
+                issues['ALPACA_API_KEY'] = 'Alpaca API key required for production'
+                
+            if not cls.ALPACA_SECRET_KEY:
+                issues['ALPACA_SECRET_KEY'] = 'Alpaca secret key required for production'
+                
+            if not cls.DATABASE_URL:
+                issues['DATABASE_URL'] = 'Database URL required for production'
+                
+            if not cls.CSRF_SECRET_KEY:
+                issues['CSRF_SECRET_KEY'] = 'CSRF secret key required for production'
+                
         # Warning validations
+        if not cls.ALPACA_API_KEY:
+            warnings['ALPACA_API_KEY'] = 'Alpaca API key not set - trading features disabled'
+            
+        if not cls.ALPACA_SECRET_KEY:
+            warnings['ALPACA_SECRET_KEY'] = 'Alpaca secret key not set - trading features disabled'
+            
         if not cls.ALPHA_VANTAGE_API_KEY:
             warnings['ALPHA_VANTAGE_API_KEY'] = 'Alpha Vantage API key not set - yfinance will be used'
+            
+        if not cls.DATABASE_URL:
+            warnings['DATABASE_URL'] = 'Database URL not set - using local data only'
             
         # Validate Redis connection
         if cls.CACHE_TYPE == 'redis' and not cls.CACHE_REDIS_URL:
@@ -115,4 +151,25 @@ class Config:
             'level': cls.LOG_LEVEL,
             'file': cls.LOG_FILE,
             'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        }
+    
+    @classmethod
+    def get_alpaca_config(cls) -> Dict[str, Any]:
+        """Get Alpaca API configuration"""
+        return {
+            'api_key': cls.ALPACA_API_KEY,
+            'secret_key': cls.ALPACA_SECRET_KEY,
+            'base_url': cls.ALPACA_BASE_URL
+        }
+    
+    @classmethod
+    def get_security_config(cls) -> Dict[str, Any]:
+        """Get security configuration"""
+        return {
+            'csrf_secret_key': cls.CSRF_SECRET_KEY,
+            'api_rate_limit': cls.API_RATE_LIMIT,
+            'request_timeout': cls.REQUEST_TIMEOUT,
+            'cors_origins': cls.CORS_ORIGINS,
+            'allowed_hosts': cls.ALLOWED_HOSTS,
+            'max_content_length': cls.MAX_CONTENT_LENGTH
         } 

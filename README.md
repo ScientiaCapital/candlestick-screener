@@ -13,6 +13,55 @@ A web application that scans stocks for various technical patterns using pandas-
 - Rate limiting for API protection
 - Comprehensive test suite
 
+## Architecture
+
+### System Overview
+
+The Candlestick Screener follows a modular Flask-based architecture with Redis for caching and rate limiting:
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Web Browser   │───▶│  Flask App      │───▶│   yfinance      │
+│   (Frontend)    │    │  (app.py)       │    │   API           │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐    ┌─────────────────┐
+                       │  Pattern Engine │    │   Redis Cache   │
+                       │  (patterns.py)  │    │  & Rate Limiter │
+                       └─────────────────┘    └─────────────────┘
+```
+
+### Core Components
+
+- **app.py**: Main Flask application with route handlers and business logic
+- **config.py**: Centralized configuration management with environment variable support
+- **patterns.py**: 60+ candlestick pattern definitions and detection algorithms
+- **cache_manager.py**: Redis-based caching with intelligent invalidation strategies
+- **rate_limiter.py**: API rate limiting using Redis for distributed rate tracking
+- **security.py**: Input validation, CSRF protection, and security middleware
+
+### Data Flow
+
+1. **User Request**: Web interface sends pattern selection to Flask backend
+2. **Rate Limiting**: Request validated against Redis-based rate limits
+3. **Cache Check**: System checks Redis cache for existing pattern results
+4. **Data Fetching**: If cache miss, yfinance fetches real-time stock data
+5. **Pattern Analysis**: pandas-ta library processes data for pattern detection
+6. **Result Caching**: Results stored in Redis with configurable TTL
+7. **Response**: JSON results returned to frontend for display
+
+### Technology Stack
+
+- **Backend**: Flask (Python 3.8+)
+- **Data Processing**: pandas, numpy, pandas-ta
+- **Stock Data**: yfinance (primary), Alpha Vantage (optional)
+- **Caching**: Redis with Flask-Caching
+- **Rate Limiting**: Flask-Limiter with Redis backend
+- **Security**: Custom middleware with CSRF protection
+- **Testing**: pytest with comprehensive coverage
+- **Frontend**: HTML templates with responsive CSS/JavaScript
+
 ## Prerequisites
 
 - Python 3.8 or higher
@@ -50,18 +99,18 @@ pip install -r requirements.txt
 
 ## Configuration
 
-1. Create a `.env` file in the project root:
-```
-FLASK_APP=app.py
-FLASK_ENV=development
-BATCH_SIZE=10
-REDIS_URL=redis://localhost:6379/0
-REDIS_CACHE_TIMEOUT=300
-RATELIMIT_DEFAULT=200/hour
-SECRET_KEY=your-secret-key
+1. Copy the example environment file and customize it:
+```bash
+cp .env.example .env
 ```
 
-2. Add your stock symbols to `datasets/symbols.csv` in the format:
+2. Edit the `.env` file with your specific settings:
+   - Set a secure `SECRET_KEY` for production
+   - Configure Redis URLs for your environment
+   - Adjust batch sizes and rate limits as needed
+   - Add API keys if using Alpha Vantage (optional)
+
+3. Add your stock symbols to `datasets/symbols.csv` in the format:
 ```
 SYMBOL,Company Name
 AAPL,Apple Inc.

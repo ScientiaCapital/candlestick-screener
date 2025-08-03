@@ -15,9 +15,11 @@ class InputValidator:
     """Input validation utilities"""
     
     # Regex patterns for validation
-    SYMBOL_PATTERN = re.compile(r'^[A-Z0-9]{1,5}$')
+    SYMBOL_PATTERN = re.compile(r'^[A-Z0-9]{1,8}$')  # Extended for crypto symbols
     PATTERN_NAME_PATTERN = re.compile(r'^CDL[A-Z0-9]+$')
     DATE_PATTERN = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+    ALPACA_KEY_PATTERN = re.compile(r'^[A-Z0-9]{20}$')  # Alpaca API key format
+    UUID_PATTERN = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
     
     @classmethod
     def validate_symbol(cls, symbol: str) -> bool:
@@ -84,6 +86,76 @@ class InputValidator:
         try:
             num_val = float(value)
             return min_val <= num_val <= max_val
+        except (ValueError, TypeError):
+            return False
+    
+    @classmethod
+    def validate_alpaca_key(cls, api_key: str) -> bool:
+        """
+        Validate Alpaca API key format
+        
+        Args:
+            api_key: API key to validate
+            
+        Returns:
+            bool: True if valid format
+        """
+        if not api_key or not isinstance(api_key, str):
+            return False
+        
+        return bool(cls.ALPACA_KEY_PATTERN.match(api_key.strip()))
+    
+    @classmethod
+    def validate_uuid(cls, uuid_str: str) -> bool:
+        """
+        Validate UUID format
+        
+        Args:
+            uuid_str: UUID string to validate
+            
+        Returns:
+            bool: True if valid UUID format
+        """
+        if not uuid_str or not isinstance(uuid_str, str):
+            return False
+        
+        return bool(cls.UUID_PATTERN.match(uuid_str.strip()))
+    
+    @classmethod
+    def validate_quantity(cls, quantity: Any, min_val: float = 0.001, max_val: float = 1000000.0) -> bool:
+        """
+        Validate trading quantity
+        
+        Args:
+            quantity: Quantity to validate
+            min_val: Minimum allowed quantity
+            max_val: Maximum allowed quantity
+            
+        Returns:
+            bool: True if valid
+        """
+        try:
+            num_val = float(quantity)
+            return min_val <= num_val <= max_val and num_val > 0
+        except (ValueError, TypeError):
+            return False
+    
+    @classmethod
+    def validate_price(cls, price: Any, min_val: float = 0.01, max_val: float = 100000.0) -> bool:
+        """
+        Validate price value
+        
+        Args:
+            price: Price to validate
+            min_val: Minimum allowed price
+            max_val: Maximum allowed price
+            
+        Returns:
+            bool: True if valid
+        """
+        try:
+            num_val = float(price)
+            return min_val <= num_val <= max_val and num_val > 0
         except (ValueError, TypeError):
             return False
     
@@ -160,6 +232,35 @@ class SecurityMiddleware:
                 
             return func(*args, **kwargs)
         return wrapper
+    
+    @staticmethod
+    def validate_trading_input(func):
+        """Decorator to validate trading-related input in request"""
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if request.is_json:
+                data = request.get_json()
+                
+                # Validate symbol
+                symbol = data.get('symbol')
+                if symbol and not InputValidator.validate_symbol(symbol):
+                    logger.warning(f"Invalid symbol in trading request: {symbol} from {request.remote_addr}")
+                    return jsonify({'error': 'Invalid symbol format'}), 400
+                
+                # Validate quantity
+                quantity = data.get('quantity')
+                if quantity and not InputValidator.validate_quantity(quantity):
+                    logger.warning(f"Invalid quantity in trading request: {quantity} from {request.remote_addr}")
+                    return jsonify({'error': 'Invalid quantity'}), 400
+                
+                # Validate price (if provided)
+                price = data.get('price')
+                if price and not InputValidator.validate_price(price):
+                    logger.warning(f"Invalid price in trading request: {price} from {request.remote_addr}")
+                    return jsonify({'error': 'Invalid price'}), 400
+                    
+            return func(*args, **kwargs)
+        return wrapper
 
 
 class CSRFProtection:
@@ -215,6 +316,19 @@ class APIKeyAuth:
 
 def init_security(app):
     """Initialize security configurations for Flask app"""
+    from config import Config
+    
+    # CORS Configuration
+    @app.after_request
+    def handle_cors(response):
+        """Handle CORS headers"""
+        origin = request.headers.get('Origin')
+        if origin and origin in Config.CORS_ORIGINS:
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, X-CSRF-Token'
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
+        return response
     
     # Security headers
     @app.after_request
@@ -224,15 +338,18 @@ def init_security(app):
         response.headers['X-Frame-Options'] = 'DENY'
         response.headers['X-XSS-Protection'] = '1; mode=block'
         response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
         
         # Content Security Policy
         csp = (
             "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline'; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
             "style-src 'self' 'unsafe-inline'; "
             "img-src 'self' data: https:; "
-            "connect-src 'self'; "
-            "font-src 'self';"
+            "connect-src 'self' https://paper-api.alpaca.markets https://api.alpaca.markets; "
+            "font-src 'self' data:; "
+            "frame-ancestors 'none';"
         )
         response.headers['Content-Security-Policy'] = csp
         
@@ -249,6 +366,19 @@ def init_security(app):
         user_agent = request.headers.get('User-Agent', '')
         if len(user_agent) > 500 or 'bot' in user_agent.lower():
             logger.info(f"Suspicious request from {request.remote_addr}: {user_agent[:100]}")
+            
+        # Log requests to sensitive endpoints
+        sensitive_endpoints = ['/snapshot', '/api/', '/admin']
+        if any(request.path.startswith(endpoint) for endpoint in sensitive_endpoints):
+            logger.info(f"Sensitive endpoint access: {request.method} {request.path} from {request.remote_addr}")
+    
+    # Request size validation
+    @app.before_request
+    def check_request_size():
+        """Validate request size globally"""
+        if request.content_length and request.content_length > Config.MAX_CONTENT_LENGTH:
+            logger.warning(f"Request too large: {request.content_length} bytes from {request.remote_addr}")
+            return jsonify({'error': 'Request entity too large'}), 413
     
     logger.info("Security middleware initialized")
 
@@ -312,3 +442,39 @@ def is_safe_redirect_url(url: str) -> bool:
     
     # Block external redirects
     return False
+
+
+def mask_sensitive_data(data: str, mask_char: str = '*', reveal_chars: int = 4) -> str:
+    """
+    Mask sensitive data for logging
+    
+    Args:
+        data: Sensitive data to mask
+        mask_char: Character to use for masking
+        reveal_chars: Number of characters to reveal at start/end
+        
+    Returns:
+        str: Masked data
+    """
+    if not data or len(data) <= reveal_chars * 2:
+        return mask_char * len(data) if data else ''
+    
+    return data[:reveal_chars] + mask_char * (len(data) - reveal_chars * 2) + data[-reveal_chars:]
+
+
+def validate_ip_address(ip: str) -> bool:
+    """
+    Validate IP address format
+    
+    Args:
+        ip: IP address to validate
+        
+    Returns:
+        bool: True if valid IP
+    """
+    import ipaddress
+    try:
+        ipaddress.ip_address(ip)
+        return True
+    except ValueError:
+        return False

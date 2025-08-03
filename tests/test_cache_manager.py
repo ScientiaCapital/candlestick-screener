@@ -27,20 +27,23 @@ def test_cache_stock_data(mock_cache):
     mock_cache.get.return_value = None
     mock_cache.set = Mock()
 
-    # Test function
-    @cache_stock_data()
-    def get_data(symbol):
-        return pd.DataFrame({'data': [1, 2, 3]})
+    # Test class with method (since cache_stock_data expects self parameter)
+    class TestDataManager:
+        @cache_stock_data()
+        def get_data(self, symbol):
+            return pd.DataFrame({'data': [1, 2, 3]})
+
+    manager = TestDataManager()
 
     # Test cache miss
-    result = get_data('AAPL')
+    result = manager.get_data('AAPL')
     assert result is not None
     mock_cache.get.assert_called_once()
     mock_cache.set.assert_called_once()
 
     # Test cache hit
     mock_cache.get.return_value = pd.DataFrame({'data': [4, 5, 6]})
-    result = get_data('AAPL')
+    result = manager.get_data('AAPL')
     assert result is not None
     assert len(mock_cache.set.call_args_list) == 1  # Should not set again
 
@@ -95,11 +98,11 @@ def test_cache_symbol_list(mock_cache):
 @patch('cache_manager.cache')
 def test_invalidate_cache(mock_cache):
     """Test cache invalidation"""
-    mock_cache.delete_many = Mock()
+    mock_cache.delete = Mock()
     
     # Test invalidation
     invalidate_cache('test', 'arg1', 'arg2')
-    mock_cache.delete_many.assert_called_once_with('test:arg1:arg2')
+    mock_cache.delete.assert_called_once_with('test:arg1:arg2')
 
 def test_get_cache_stats():
     """Test cache statistics"""

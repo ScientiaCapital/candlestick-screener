@@ -53,7 +53,12 @@ def test_snapshot_endpoint(client, mock_symbols_file):
 
 def test_snapshot_endpoint_error(client, mock_symbols_file):
     """Test the snapshot endpoint with an error."""
-    with patch('app.open', mock_open(read_data='AAPL,Apple Inc.\nMSFT,Microsoft Corporation\n')):
+    # Mock load_symbols to return exactly 2 symbols
+    test_symbols = {
+        'AAPL': {'company': 'Apple Inc.'},
+        'MSFT': {'company': 'Microsoft Corporation'}
+    }
+    with patch('app.load_symbols', return_value=test_symbols):
         with patch('app.stock_manager.get_stock_data', side_effect=Exception('Test error')):
             response = client.get('/snapshot')
             assert response.status_code == 200  # Graceful error handling
