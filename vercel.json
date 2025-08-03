@@ -20,11 +20,6 @@
     "FLASK_ENV": "production",
     "PYTHONPATH": "$PYTHONPATH:."
   },
-  "functions": {
-    "app.py": {
-      "maxDuration": 30
-    }
-  },
   "regions": ["iad1"],
   "build": {
     "env": {
