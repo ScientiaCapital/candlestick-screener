@@ -1,45 +1,52 @@
 # Candlestick Screener - Claude Context Guide
 
-**Version:** MVP 1.0  
-**Last Updated:** August 3, 2025  
+**Version:** 2.0.0  
+**Last Updated:** August 4, 2025  
 **Purpose:** Enable future Claude sessions to understand and work with this project immediately  
 
 ## Project Overview
 
-The Candlestick Screener is a Flask-based web application that screens stocks for 60+ candlestick patterns using real-time market data. It's designed as a serverless-first application optimized for Vercel deployment with Neon PostgreSQL.
+The Candlestick Screener is a modern React/Next.js 14 application with TypeScript that screens stocks for candlestick patterns using real-time market data. It features a professional frontend with Python serverless API endpoints, optimized for Vercel deployment.
 
 ### Core Functionality
-- **Pattern Detection**: Identifies 60+ candlestick patterns (hammer, doji, engulfing, etc.)
-- **Real-Time Data**: Primary data source via Alpaca API with yfinance fallback
-- **Stock Screening**: Scans multiple symbols for pattern occurrences
-- **Web Interface**: Clean HTML interface for pattern selection and results
-- **API Endpoints**: RESTful APIs for data access and account information
+- **Pattern Detection**: Professional React components for candlestick pattern screening
+- **Real-Time Data**: Python serverless APIs with market data integration
+- **Stock Screening**: Interactive TypeScript interface for pattern analysis
+- **Modern UI**: React/Next.js 14 with Tailwind CSS and Heroicons
+- **Component Architecture**: PatternSelector, StockScanner, and ResultsTable components
 
 ## Technology Stack
 
-### Backend
-- **Flask**: Python web framework (serverless-optimized)
-- **pandas**: Data manipulation and analysis
-- **pandas-ta**: Technical analysis indicators and candlestick patterns
-- **alpaca-py**: Official Alpaca SDK for market data
+### Frontend
+- **React**: ^18 with modern hooks and functional components
+- **Next.js**: 14.2.5 with App Router and TypeScript support
+- **TypeScript**: ^5.8.3 for type safety and developer experience
+- **Tailwind CSS**: ^3.4.6 for responsive, utility-first styling
+- **Heroicons**: ^2.2.0 for consistent iconography
 
-### Infrastructure
-- **Deployment**: Vercel (serverless functions)
-- **Database**: Neon PostgreSQL (serverless, auto-scaling)
-- **Caching**: Flask-Caching with Redis fallback
-- **Rate Limiting**: Flask-Limiter with Redis storage
+### Backend APIs
+- **Python**: Serverless functions in /api directory
+- **Vercel Runtime**: Python serverless environment
+- **Market Data**: Integration ready for external APIs
 
-### Data Sources
-- **Primary**: Alpaca Markets API (real-time, reliable)
-- **Fallback**: yfinance (backup data source)
-- **Symbols**: CSV-based symbol list with in-memory defaults
+### Development & Testing
+- **Jest**: ^29.7.0 for comprehensive testing framework
+- **Testing Library**: React testing utilities with user-event support
+- **ESLint**: Next.js configuration for code quality
+- **PostCSS**: Build pipeline with Autoprefixer
+
+### Architecture
+- **Frontend**: React/Next.js 14 application with TypeScript
+- **APIs**: Python serverless functions in /api directory
+- **Deployment**: Vercel serverless platform
+- **Styling**: Tailwind CSS with responsive design patterns
 
 ## Architecture Overview
 
 ### Serverless-First Design
 ```
 ┌─────────────┐    ┌──────────────┐    ┌─────────────┐
-│   Frontend  │────│ Flask Routes │────│ Data Layer  │
+│   Frontend  │────│ API Routes   │────│ Data Layer  │
 │  (Browser)  │    │  (Vercel)    │    │  (Alpaca)   │
 └─────────────┘    └──────────────┘    └─────────────┘
                           │
@@ -59,8 +66,8 @@ The Candlestick Screener is a Flask-based web application that screens stocks fo
 ## Key Files & Purposes
 
 ### Core Application
-- **`app.py`**: Main Flask application with routes and initialization
-- **`config.py`**: Configuration management with validation
+- **`app/`**: React/Next.js application with components and pages
+- **`api/`**: Python serverless API endpoints (health, patterns, scan, symbols)
 - **`patterns.py`**: Dictionary of 60+ candlestick patterns
 
 ### Data & API Integration
@@ -156,15 +163,15 @@ results = pattern_analyzer.batch_process_patterns(df, patterns_to_check)
 
 ### Test Categories
 ```
+__tests__/
+├── components/
+│   ├── PatternSelector.test.tsx    # Pattern selector component tests
+│   ├── StockScanner.test.tsx       # Stock scanner component tests
+│   └── ResultsTable.test.tsx       # Results table component tests
 tests/
-├── conftest.py              # Test fixtures and configuration
-├── test_alpaca_integration.py    # Alpaca API integration tests
-├── test_app.py              # Flask application tests
-├── test_cache_manager.py    # Caching system tests
-├── test_config.py           # Configuration validation tests
-├── test_patterns.py         # Pattern detection tests
-├── test_rate_limiter.py     # Rate limiting tests
-└── test_api.py              # API endpoint tests
+├── test_alpaca_integration.py      # Alpaca API integration tests  
+├── test_config.py                  # Configuration validation tests
+└── test_patterns.py                # Pattern detection tests
 ```
 
 ## Security Measures
@@ -199,10 +206,9 @@ tests/
 
 ### Production (Required)
 ```env
-# Flask Configuration
-SECRET_KEY=your-production-secret-key
-FLASK_ENV=production
-FLASK_DEBUG=False
+# Next.js Configuration  
+NODE_ENV=production
+NEXT_PUBLIC_API_URL=your-api-base-url
 
 # Alpaca API (Required for MVP)
 ALPACA_API_KEY=your-alpaca-api-key
@@ -222,7 +228,7 @@ RATELIMIT_STORAGE_URL=redis://localhost:6379/0
 
 ### Development (Optional)
 ```env
-FLASK_DEBUG=True
+NODE_ENV=development
 ALPHA_VANTAGE_API_KEY=optional-alpha-vantage-key
 LOG_LEVEL=DEBUG
 ```
